@@ -37,3 +37,27 @@ end
 figure
 imshow(avg_z,[z_min, z_max]),colormap(gray);
 
+%% projection of a region
+% fid = fopen('sandiego.txt');
+% A = textscan(fid,'%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f%f','delimiter',',');
+% fclose(fid);
+
+
+%% find nearby points
+point_ref = [X(100), Y(100), Z(100)];
+voisin = [];
+for i = 1:size(X)
+    if norm(point_ref-[X(i), Y(i), Z(i)]) < 2
+        if i ~= 100
+            voisin = [voisin, i];
+        end
+    end
+end
+V_b = [sum(X(voisin(:)))/size(voisin,2);sum(Y(voisin(:)))/size(voisin,2);sum(Z(voisin(:)))/size(voisin,2);];
+somme = zeros(3, 3);
+for i =1:size(voisin,2)
+    V_k = [X(voisin(i));Y(voisin(i));Z(voisin(i))];
+    somme = somme + (V_k-V_b)*transpose(V_k-V_b);
+end
+c = somme / size(voisin,2);
+eig(c)
